@@ -34,15 +34,14 @@ public class ReservationFileRepository implements ReservationRepository {
                 String[] fields = line.split(",", -1);
                 result.add(deserialize(fields, hostId));
             }
-
         } catch(IOException ex) {
-
         }
         return result;
     }
 
     @Override
     public Reservation add(Reservation reservation) throws DataException {
+
         return null;
     }
 
@@ -62,13 +61,16 @@ public class ReservationFileRepository implements ReservationRepository {
 
     private Reservation deserialize(String[] fields, String hostId) {
         //id,start_date,end_date,guest_id,total
-
         Reservation reservation = new Reservation();
-        reservation.getHost().setHostId(hostId);
+        Host host = new Host();
+        host.setHostId(hostId);
+        reservation.setHost(host);
         reservation.setId(Integer.parseInt(fields[0]));
         reservation.setStartDate(LocalDate.parse(fields[1]));
         reservation.setEndDate(LocalDate.parse(fields[2]));
-        reservation.getGuest().setGuest_Id(Integer.parseInt(fields[3]));
+        Guest guest = new Guest();
+        guest.setGuest_Id(Integer.parseInt(fields[3]));
+        reservation.setGuest(guest);
         reservation.setTotalPrice(new BigDecimal(fields[4]));
         return reservation;
     }
