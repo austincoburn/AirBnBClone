@@ -44,7 +44,7 @@ public class GuestFileRepository implements GuestRepository {
         return findAll().stream().filter(g -> g.getEmail().equalsIgnoreCase(email)).findFirst().orElse(null);
     }
 
-    public Guest deserialize(String[] fields) {
+    private Guest deserialize(String[] fields) {
         //guest_id,first_name,last_name,email,phone,state
         Guest result = new Guest();
         result.setGuest_Id(Integer.parseInt(fields[0]));
