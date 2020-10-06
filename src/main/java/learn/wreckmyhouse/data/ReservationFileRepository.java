@@ -26,13 +26,15 @@ public class ReservationFileRepository implements ReservationRepository {
     public List<Reservation> findAllReservations(String hostId) throws DataException {
         ArrayList<Reservation> result = new ArrayList<>();
 
-        try(BufferedReader reader = new BufferedReader(new FileReader(getFilePath(hostId)))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(getFilePath(hostId)))) {
             //read header
             reader.readLine();
 
             for(String line = reader.readLine(); line != null; line = reader.readLine()) {
                 String[] fields = line.split(",", -1);
-                result.add(deserialize(fields, hostId));
+                if(fields.length == 5) {
+                    result.add(deserialize(fields, hostId));
+                }
             }
         } catch(IOException ex) {
         }
