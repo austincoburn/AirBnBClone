@@ -11,14 +11,17 @@ public class Reservation {
     Host host;
     LocalDate startDate;
     LocalDate endDate;
+    BigDecimal totalPrice;
 
 
-    public Reservation(int id, Guest guest, Host host, LocalDate startDate, LocalDate endDate) {
+    public Reservation(int id, Guest guest, Host host, LocalDate startDate, LocalDate endDate, BigDecimal totalPrice) {
         this.id = id;
         this.guest = guest;
         this.host = host;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.totalPrice = totalPrice;
+
     }
 
     public Reservation() {}
@@ -63,8 +66,15 @@ public class Reservation {
         this.endDate = endDate;
     }
 
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
     public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public BigDecimal calculateTotalPrice() {
         BigDecimal totalPrice = BigDecimal.ZERO;
         if(startDate.isAfter(endDate)) {
             return BigDecimal.ZERO;
