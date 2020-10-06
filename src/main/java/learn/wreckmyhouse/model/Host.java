@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 
 public class Host {
 
-    int hostId;
+    String hostId;
     String lastName;
     String email;
-    int phoneNumber;
+    String phoneNumber;
     String address;
     String city;
     String state;
@@ -16,7 +16,7 @@ public class Host {
     BigDecimal weekend_rate;
 
 
-    public Host(int hostId, String lastName, String email, int phoneNumber, String address, String city, String state, int postal_code,
+    public Host(String hostId, String lastName, String email, String phoneNumber, String address, String city, String state, int postal_code,
                 BigDecimal standard_rate, BigDecimal weekend_rate) {
         this.hostId = hostId;
         this.lastName = lastName;
@@ -35,11 +35,11 @@ public class Host {
     }
 
 
-    public int getHostId() {
+    public String getHostId() {
         return hostId;
     }
 
-    public void setHostId(int hostId) {
+    public void setHostId(String hostId) {
         this.hostId = hostId;
     }
 
@@ -59,11 +59,11 @@ public class Host {
         this.email = email;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

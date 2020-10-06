@@ -6,10 +6,10 @@ public class Guest {
     String firstname;
     String lastName;
     String email;
-    int phoneNumber;
+    String phoneNumber;
     String State;
 
-    public Guest(int guest_Id, String firstname, String lastName, String email, int phoneNumber, String state) {
+    public Guest(int guest_Id, String firstname, String lastName, String email, String phoneNumber, String state) {
         this.guest_Id = guest_Id;
         this.firstname = firstname;
         this.lastName = lastName;
@@ -54,11 +54,11 @@ public class Guest {
         this.email = email;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
