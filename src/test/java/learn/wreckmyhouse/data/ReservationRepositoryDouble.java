@@ -26,6 +26,10 @@ public class ReservationRepositoryDouble implements ReservationRepository {
 
     @Override
     public Reservation add(Reservation reservation) throws DataException {
+//        Guest guest = new Guest(1, "Austin", "Coburn", "austin@gmail.com", "(715) 6510725", "CO");
+//        Host host = new Host("sda22adfasdf3434", "coburn", "ac@gmail.com", "(933) 4434332", "2323 Main Dr.", "Plover", "WI", 34893, new BigDecimal(29032.0343432), new BigDecimal(232.0343432));
+//        Reservation reservation = new Reservation(1, guest, host, LocalDate.parse("2020-09-19"), LocalDate.parse("2020-09-25"), new BigDecimal(40093.34)));
+        reservations.add(reservation);
         return reservation;
     }
 
@@ -35,7 +39,7 @@ public class ReservationRepositoryDouble implements ReservationRepository {
     }
 
     @Override
-    public boolean deleteReservation(int id) throws DataException {
+    public boolean deleteReservation(int reservationId, String hostId) throws DataException {
         return true;
     }
 }

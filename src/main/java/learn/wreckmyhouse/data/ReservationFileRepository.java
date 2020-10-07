@@ -4,19 +4,20 @@ import learn.wreckmyhouse.model.Guest;
 import learn.wreckmyhouse.model.Host;
 import learn.wreckmyhouse.model.Reservation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class ReservationFileRepository implements ReservationRepository {
 
     private final String directory;
+    private static final String HEADER = "id,start_date,end_date,guest_id,total";
 
     public ReservationFileRepository(@Value("${reservationFileDirectory}") String directory) {
         this.directory = directory;
@@ -43,17 +44,40 @@ public class ReservationFileRepository implements ReservationRepository {
 
     @Override
     public Reservation add(Reservation reservation) throws DataException {
-
-        return null;
+        if(reservation == null) {
+            return null;
+        }
+       List<Reservation> reservations = findAllReservations(reservation.getHost().getHostId());
+       int nextId = reservations.stream().mapToInt(Reservation::getId).max().orElse(0) + 1;
+       reservation.setId(nextId);
+       reservations.add(reservation);
+       writeAll(reservations, reservation.getHost().getHostId());
+       return reservation;
     }
 
     @Override
     public boolean editReservation(Reservation reservation) throws DataException {
+        List<Reservation> all = findAllReservations(reservation.getHost().getHostId());
+        for(int i = 0; i < all.size(); i++) {
+            if(all.get(i).getId() == reservation.getId()) {
+                all.set(i, reservation);
+                writeAll(all, reservation.getHost().getHostId());
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
-    public boolean deleteReservation(int id) throws DataException {
+    public boolean deleteReservation(int reservationId, String hostId) throws DataException {
+        List<Reservation> all = findAllReservations(hostId);
+        for(int i = 0; i < all.size(); i++) {
+            if(all.get(i).getId() == reservationId) {
+                all.remove(i);
+                writeAll(all, hostId);
+                return true;
+            }
+        }
         return false;
     }
 
@@ -75,6 +99,24 @@ public class ReservationFileRepository implements ReservationRepository {
         reservation.setGuest(guest);
         reservation.setTotalPrice(new BigDecimal(fields[4]));
         return reservation;
+    }
+
+    private void writeAll(List<Reservation> reservations, String hostId) throws DataException {
+        try(PrintWriter writer = new PrintWriter(getFilePath(hostId))) {
+            writer.println(HEADER);
+
+            for(Reservation reservation : reservations) {
+                writer.println(serialize(reservation));
+            }
+        } catch (FileNotFoundException ex) {
+            throw new DataException(ex);
+        }
+    }
+
+    private String serialize(Reservation reservation) {
+        return String.format("%s,%s,%s,%s,%.2f", reservation.getId(),
+                reservation.getStartDate(), reservation.getEndDate(),
+                reservation.getGuest().getGuest_Id(), reservation.getTotalPrice());
     }
 
 }

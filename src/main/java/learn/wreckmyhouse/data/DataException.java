@@ -6,6 +6,10 @@ public class DataException extends Exception {
         super(message);
     }
 
+    public DataException(Throwable cause) {
+        super(cause);
+    }
+
     public DataException(String message, Throwable cause) {
         super(message, cause);
     }
