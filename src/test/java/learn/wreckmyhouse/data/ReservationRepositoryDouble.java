@@ -25,6 +25,11 @@ public class ReservationRepositoryDouble implements ReservationRepository {
     }
 
     @Override
+    public Reservation findReservationById(String hostId, int reservationId) throws DataException {
+        return reservations.stream().filter(a -> a.getId() == reservationId).findFirst().orElse(null);
+    }
+
+    @Override
     public Reservation add(Reservation reservation) throws DataException {
 //        Guest guest = new Guest(1, "Austin", "Coburn", "austin@gmail.com", "(715) 6510725", "CO");
 //        Host host = new Host("sda22adfasdf3434", "coburn", "ac@gmail.com", "(933) 4434332", "2323 Main Dr.", "Plover", "WI", 34893, new BigDecimal(29032.0343432), new BigDecimal(232.0343432));
@@ -39,7 +44,7 @@ public class ReservationRepositoryDouble implements ReservationRepository {
     }
 
     @Override
-    public boolean deleteReservation(int reservationId, String hostId) throws DataException {
+    public boolean deleteReservation(int reservationId, Reservation reservation) throws DataException {
         return true;
     }
 }

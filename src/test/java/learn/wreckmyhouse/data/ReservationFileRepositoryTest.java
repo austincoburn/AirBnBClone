@@ -66,5 +66,42 @@ class ReservationFileRepositoryTest {
         assertNull(result);
     }
 
+    @Test
+    void shouldUpdateReservation() throws DataException {
+
+        Reservation reservation = repository.findReservationById(hostId, 2);
+        reservation.setEndDate(LocalDate.parse("2020-08-19"));
+        reservation.getHost().setStandard_rate(new BigDecimal(1));
+        reservation.getHost().setWeekend_rate(new BigDecimal(2));
+        reservation.setTotalPrice(reservation.calculateTotalPrice());
+        boolean boolResult = repository.editReservation(reservation);
+        assertEquals(new BigDecimal(2), reservation.getHost().getWeekend_rate());
+        assertTrue(boolResult);
+    }
+
+    @Test
+    void shouldNotUpdateReservation() throws DataException {
+        Reservation reservation = repository.findReservationById(hostId, 89);
+        boolean result = repository.editReservation(reservation);
+        assertFalse(result);
+    }
+
+    @Test
+    void shouldDeleteReservation() throws DataException {
+        List<Reservation> all = repository.findAllReservations(hostId);
+        Reservation reservation = repository.findReservationById(hostId, 2);
+        boolean result = repository.deleteReservation(reservation.getId(), reservation);
+        List<Reservation> afterDelete = repository.findAllReservations(hostId);
+        assertTrue(result);
+        assertEquals(all.size() - 1, afterDelete.size());
+    }
+
+    @Test
+    void shouldNotDeleteReservation() throws DataException {
+       Reservation reservation = repository.findReservationById(hostId, 7);
+       boolean result = repository.deleteReservation(7, reservation);
+       assertFalse(result);
+    }
+
 
 }
