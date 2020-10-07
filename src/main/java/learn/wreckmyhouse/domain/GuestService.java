@@ -26,20 +26,12 @@ public class GuestService {
     }
 
     public Guest findGuestByEmail(String guestEmail) throws DataException {
-        Result<Guest> result = new Result<>();
-        List<Guest> all = findAllGuests();
+//        Result<Guest> result = new Result<>();
         if(guestEmail == null || guestEmail.trim().length() == 0) {
             return null;
         }
-
-        for(Guest guest : all) {
-            if(guest.getEmail().equalsIgnoreCase(guestEmail)) {
-                return guest;
-            }
-        }
-
-        result.addErrorMessage("The email you entered does not exist");
-        return null;
+//        result.addErrorMessage("The email you entered does not exist");
+        return repository.findByEmail(guestEmail);
     }
 
 
