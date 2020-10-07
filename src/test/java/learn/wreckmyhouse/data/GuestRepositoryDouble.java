@@ -8,6 +8,7 @@ import java.util.List;
 public class GuestRepositoryDouble implements GuestRepository {
 
     private ArrayList<Guest> guests = new ArrayList<>();
+
     public GuestRepositoryDouble() {
         guests.add(new Guest(1, "Austin", "Coburn", "austin@gmail.com", "(715) 6510725", "CO"));
         guests.add(new Guest(2, "Colter", "Weinke", "colter@gmail.com", "(715) 6310745", "WI"));
@@ -21,11 +22,7 @@ public class GuestRepositoryDouble implements GuestRepository {
 
     @Override
     public Guest findByEmail(String email) throws DataException {
-        for(Guest guest : guests) {
-            if(guest.getEmail().equalsIgnoreCase(email)) {
-                return guest;
-            }
-        }
-        return null;
+        return guests.stream().filter(a -> a.getEmail().equalsIgnoreCase(email)).findFirst().orElse(null);
+
     }
 }
