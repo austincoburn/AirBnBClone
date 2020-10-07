@@ -9,12 +9,6 @@ public interface ReservationRepository {
     public Reservation findReservationById(String hostId, int reservationId) throws DataException;
     Reservation add(Reservation reservation) throws DataException;
     boolean editReservation(Reservation reservation) throws DataException;
-    boolean deleteReservation(int reservationId, Reservation reservation) throws DataException;
+    boolean deleteReservation(int reservationId, String hostId) throws DataException;
 
-
-
-//
-//    private void writeAll(List<Reservation> reservations);
-//    private String serialize(Reservation reservation);
-//    private Reservation deserialize(String[] fields);
 }

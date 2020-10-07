@@ -90,7 +90,7 @@ class ReservationFileRepositoryTest {
     void shouldDeleteReservation() throws DataException {
         List<Reservation> all = repository.findAllReservations(hostId);
         Reservation reservation = repository.findReservationById(hostId, 2);
-        boolean result = repository.deleteReservation(reservation.getId(), reservation);
+        boolean result = repository.deleteReservation(reservation.getId(), hostId);
         List<Reservation> afterDelete = repository.findAllReservations(hostId);
         assertTrue(result);
         assertEquals(all.size() - 1, afterDelete.size());
@@ -98,8 +98,7 @@ class ReservationFileRepositoryTest {
 
     @Test
     void shouldNotDeleteReservation() throws DataException {
-       Reservation reservation = repository.findReservationById(hostId, 7);
-       boolean result = repository.deleteReservation(7, reservation);
+       boolean result = repository.deleteReservation(7, hostId);
        assertFalse(result);
     }
 
