@@ -46,10 +46,21 @@ public class ReservationService {
         return reservationRepository.findReservationById(hostId, reservationId);
     }
 
-    public Result<Reservation> add(Reservation reservation) {
+    public Result<Reservation> add(Reservation reservation) throws DataException {
+       Result<Reservation> result = validateNulls(reservation);
+       if(!result.isSuccess()) {
+          return result;
+       }
 
+       result = validateDates(reservation, result);
+       if(!result.isSuccess()) {
+           return result;
+       }
 
+       Reservation r = reservationRepository.add(reservation);
+       result.setPayload(r);
 
+        return result;
     }
 
     /*
@@ -115,16 +126,6 @@ public class ReservationService {
         return result;
     }
 
-    private Result<Reservation> validateGuestEmail(Reservation reservation, Result<Reservation> result) throws DataException {
-        List<Reservation> reservations = findAllReservations(reservation.getHost().getHostId());
-        for(Reservation item : reservations) {
-            if(reservation.getGuest().getEmail().equalsIgnoreCase(item.getGuest().getEmail())) {
-                return result;
-            }
-        }
 
-        result.addErrorMessage("This guest email does not exist!");
-        return result;
-    }
 
 }

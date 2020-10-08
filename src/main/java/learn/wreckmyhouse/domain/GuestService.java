@@ -4,6 +4,7 @@ import learn.wreckmyhouse.data.DataException;
 import learn.wreckmyhouse.data.GuestFileRepository;
 import learn.wreckmyhouse.data.GuestRepository;
 import learn.wreckmyhouse.model.Guest;
+import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,11 +25,31 @@ public class GuestService {
         return all;
     }
 
-    public Guest findGuestByEmail(String guestEmail) throws DataException {
+    public Result<Guest> findGuestByEmail(String guestEmail) throws DataException {
+        Result<Guest> result = new Result<>();
         if(guestEmail == null || guestEmail.trim().length() == 0) {
-            return null;
+            result.addErrorMessage("No guest email was entered!");
+            return result;
         }
-        return repository.findByEmail(guestEmail);
+
+        if(validateGuestEmail(guestEmail) == null) {
+            result.addErrorMessage("This guest email does not exist!");
+            return result;
+        }
+
+        Guest guest = repository.findByEmail(guestEmail);
+        result.setPayload(guest);
+        return result;
+    }
+
+    public Guest validateGuestEmail(String guestEmail) throws DataException {
+        List<Guest> guests = findAllGuests();
+        for(Guest guest : guests) {
+            if(guest.getEmail().equalsIgnoreCase(guestEmail)) {
+                return guest;
+            }
+        }
+        return null;
     }
 
 

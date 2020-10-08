@@ -60,6 +60,7 @@ public class ReservationFileRepository implements ReservationRepository {
        List<Reservation> reservations = findAllReservations(reservation.getHost().getHostId());
        int nextId = reservations.stream().mapToInt(Reservation::getId).max().orElse(0) + 1;
        reservation.setId(nextId);
+       reservation.setTotalPrice(reservation.calculateTotalPrice());
        reservations.add(reservation);
        writeAll(reservations, reservation.getHost().getHostId());
        return reservation;

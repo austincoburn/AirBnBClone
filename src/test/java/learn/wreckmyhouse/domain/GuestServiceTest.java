@@ -6,6 +6,7 @@ import learn.wreckmyhouse.model.Guest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,13 +28,19 @@ class GuestServiceTest {
 
     @Test
     void shouldFindGuestByEmail() throws DataException {
-        Guest guest = service.findGuestByEmail("colter@gmail.com");
-        assertEquals("Colter", guest.getFirstname());
+        Result<Guest> result = service.findGuestByEmail("colter@gmail.com");
+        assertEquals("Colter", result.getPayload().getFirstname());
     }
 
     @Test
     void shouldNotFindGuestByInvalidEmail() throws DataException {
-        Guest guest = service.findGuestByEmail("sdsdfs");
-        assertNull(guest);
+        Result<Guest> result = service.findGuestByEmail("sdsdfs");
+        assertEquals("[This guest email does not exist!]", result.getErrorMessages().toString());
+    }
+
+    @Test
+    void shouldNotFindGuestWithNullEmail() throws DataException {
+        Result<Guest> result = service.findGuestByEmail(null);
+        assertEquals("[No guest email was entered!]", result.getErrorMessages().toString());
     }
 }

@@ -53,7 +53,7 @@ class ReservationFileRepositoryTest {
         reservation.setHost(host);
         reservation.setStartDate(LocalDate.parse("2019-09-23"));
         reservation.setEndDate(LocalDate.parse("2020-10-23"));
-        reservation.setTotalPrice(reservation.calculateTotalPrice());
+        reservation.setTotalPrice(null);
 
         Reservation result = repository.add(reservation);
         assertEquals( 4, result.getId());

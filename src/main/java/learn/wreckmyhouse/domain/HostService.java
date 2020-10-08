@@ -2,7 +2,9 @@ package learn.wreckmyhouse.domain;
 
 import learn.wreckmyhouse.data.DataException;
 import learn.wreckmyhouse.data.HostRespository;
+import learn.wreckmyhouse.model.Guest;
 import learn.wreckmyhouse.model.Host;
+import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,12 +25,33 @@ public class HostService {
         return hosts;
     }
 
-    public Host findHostByEmail(String hostEmail) throws DataException {
+    public Result<Host> findHostByEmail(String hostEmail) throws DataException {
+        Result<Host> result = new Result<>();
         if(hostEmail == null || hostEmail.isBlank()) {
-            return null;
+            result.addErrorMessage("No host was entered!");
+            return result;
         }
-        return respository.findByEmail(hostEmail);
+
+        if(validateHostEmail(hostEmail) == null) {
+            result.addErrorMessage("Host email was not found!");
+            return result;
+        }
+
+        Host host = respository.findByEmail(hostEmail);
+        result.setPayload(host);
+        return result;
     }
+
+    private Host validateHostEmail(String hostEmail) throws DataException {
+        List<Host> hosts = findAllHosts();
+        for(Host host : hosts) {
+            if(host.getEmail().equalsIgnoreCase(hostEmail)) {
+                return host;
+            }
+        }
+        return null;
+    }
+
 
 }
 

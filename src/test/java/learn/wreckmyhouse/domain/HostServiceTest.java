@@ -28,19 +28,20 @@ class HostServiceTest {
 
     @Test
     void findHostByEmail() throws DataException {
-        Host host = service.findHostByEmail("ac@gmail.com");
-        assertEquals("coburn", host.getLastName());
+        Result<Host> result = service.findHostByEmail("ac@gmail.com");
+        assertEquals("coburn", result.getPayload().getLastName());
     }
 
     @Test
-    void shouldNotFindHostWithInvalidEmail() throws DataException {
-        Host host = service.findHostByEmail("dfd");
-        assertNull(host);
+    void findHostByEmailShouldShowErrorMessage() throws DataException {
+        Result<Host> result = service.findHostByEmail("sdfsdfsdfs");
+        assertEquals("Host email was not found!", result.getErrorMessages());
     }
 
     @Test
     void shouldNotFindHostWithNullEmail() throws DataException {
-        Host host = service.findHostByEmail(null);
-        assertNull(host);
+        Result<Host> result = service.findHostByEmail(null);
+        assertEquals("[No host was entered!]", result.getErrorMessages().toString());
     }
+
 }
