@@ -7,8 +7,10 @@ import learn.wreckmyhouse.data.ReservationRepository;
 import learn.wreckmyhouse.model.Guest;
 import learn.wreckmyhouse.model.Host;
 import learn.wreckmyhouse.model.Reservation;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.rmi.registry.LocateRegistry;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -63,13 +65,37 @@ public class ReservationService {
         return result;
     }
 
-    /*
-    public List<Reservation> findAllReservations(String hostId)
-    public Reservation findReservationById(String hostId, int reservationId)
-    public Reservation add(Reservation reservation)
-    public boolean editReservation(Reservation reservation)
-    public boolean deleteReservation(int reservationId, Reservation reservation)
-     */
+    public Result<Reservation> updateReservation(Reservation reservation) throws DataException {
+       Result<Reservation> result = validateDates(reservation);
+       if(!result.isSuccess()) {
+           return result;
+       }
+       boolean success = reservationRepository.editReservation(reservation);
+       if(!success) {
+           result.addErrorMessage("Could not update Reservation Id: " + reservation.getId());
+       }
+
+       result.setPayload(reservation);
+       return result;
+    }
+
+    public Result<Reservation> deleteReservation(int reservationId, String hostEmail) throws DataException {
+
+        Result<Reservation> result = new Result<>();
+        Reservation reservation = findReservationById(hostEmail, reservationId);
+        if(reservation == null) {
+            result.addErrorMessage("The reservation ID: " + reservationId + " you entered was invalid");
+            return result;
+        }
+        boolean success = reservationRepository.deleteReservation(reservationId, hostEmail);
+        if(!success) {
+            result.addErrorMessage("Deletion was unsuccessful!");
+            return result;
+        }
+        result.setPayload(reservation);
+        return result;
+    }
+
     private Result<Reservation> validateNulls(Reservation reservation) {
         Result<Reservation> result = new Result<>();
 
@@ -97,9 +123,7 @@ public class ReservationService {
             result.addErrorMessage("Must enter a end date");
             return result;
         }
-
         return result;
-
     }
 
     private Result<Reservation> validateDates(Reservation reservation, Result<Reservation> result) throws DataException {
@@ -116,10 +140,38 @@ public class ReservationService {
 
         List<Reservation> all = findAllReservations(reservation.getHost().getHostId());
         for(Reservation line : all) {
-            for(LocalDate date = reservation.getStartDate(); date.isBefore(reservation.getEndDate()); date = date.plusDays(1)) {
-                if(line.getStartDate() == date || line.getEndDate() == date) {
-                    result.addErrorMessage("This date is already booked!");
-                    return result;
+            for(LocalDate date = line.getStartDate(); date.isBefore(line.getEndDate()); date = date.plusDays(1)) {
+                for(LocalDate date1 = reservation.getStartDate(); date1.isBefore(reservation.getEndDate()); date1 = date1.plusDays(1)) {
+                    if(date1.isEqual(date)) {
+                        result.addErrorMessage("This date is already booked!");
+                        return result;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private Result<Reservation> validateDates(Reservation reservation) throws DataException {
+        Result<Reservation> result = new Result<>();
+        if(reservation.getStartDate().isBefore(LocalDate.now())) {
+            result.addErrorMessage("Start date must be in the future!");
+            return result;
+        }
+
+        if(reservation.getStartDate().isAfter(reservation.getEndDate())) {
+            result.addErrorMessage("Start date must be before end date!");
+            return result;
+        }
+
+        List<Reservation> all = findAllReservations(reservation.getHost().getHostId());
+        for(Reservation line : all) {
+            for(LocalDate date = line.getStartDate(); date.isBefore(line.getEndDate()); date = date.plusDays(1)) {
+                for(LocalDate date1 = reservation.getStartDate(); date1.isBefore(reservation.getEndDate()); date1 = date1.plusDays(1)) {
+                    if(date1.isEqual(date)) {
+                        result.addErrorMessage("This date is already booked!");
+                        return result;
+                    }
                 }
             }
         }

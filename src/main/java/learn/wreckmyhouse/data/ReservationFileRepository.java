@@ -71,6 +71,7 @@ public class ReservationFileRepository implements ReservationRepository {
         if(reservation == null) {
             return false;
         }
+        reservation.setTotalPrice(reservation.calculateTotalPrice());
 
         List<Reservation> all = findAllReservations(reservation.getHost().getHostId());
         for(int i = 0; i < all.size(); i++) {

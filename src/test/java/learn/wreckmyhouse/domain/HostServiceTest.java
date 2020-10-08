@@ -35,7 +35,7 @@ class HostServiceTest {
     @Test
     void findHostByEmailShouldShowErrorMessage() throws DataException {
         Result<Host> result = service.findHostByEmail("sdfsdfsdfs");
-        assertEquals("Host email was not found!", result.getErrorMessages());
+        assertEquals("[Host email was not found!]", result.getErrorMessages().toString());
     }
 
     @Test
