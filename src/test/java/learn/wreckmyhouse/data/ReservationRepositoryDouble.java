@@ -15,7 +15,7 @@ public class ReservationRepositoryDouble implements ReservationRepository {
 
     public ReservationRepositoryDouble() {
         Guest guest = new Guest(1, "Austin", "Coburn", "austin@gmail.com", "(715) 6510725", "CO");
-        Host host = new Host("sda22adfasdf3434", "coburn", "ac@gmail.com", "(933) 4434332", "2323 Main Dr.", "Plover", "WI", 34893, new BigDecimal(29032.0343432), new BigDecimal(232.0343432));
+        Host host = new Host("3edda6bc-ab95-49a8-8962-d50b53f84b15", "coburn", "ac@gmail.com", "(933) 4434332", "2323 Main Dr.", "Plover", "WI", 34893, new BigDecimal(29032.0343432), new BigDecimal(232.0343432));
         reservations.add(new Reservation(1, guest, host, LocalDate.parse("2020-09-19"), LocalDate.parse("2020-09-25"), new BigDecimal(40093.34)));
     }
 

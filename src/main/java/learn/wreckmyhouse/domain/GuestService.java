@@ -17,7 +17,6 @@ public class GuestService {
     }
 
     public List<Guest> findAllGuests() throws DataException {
-        Result<Guest> result = new Result<>();
         List<Guest> all = repository.findAll();
         if(all.isEmpty() || all.size() == 0) {
             return null;
@@ -26,11 +25,9 @@ public class GuestService {
     }
 
     public Guest findGuestByEmail(String guestEmail) throws DataException {
-//        Result<Guest> result = new Result<>();
         if(guestEmail == null || guestEmail.trim().length() == 0) {
             return null;
         }
-//        result.addErrorMessage("The email you entered does not exist");
         return repository.findByEmail(guestEmail);
     }
 
