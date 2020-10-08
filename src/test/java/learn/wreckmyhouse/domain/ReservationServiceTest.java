@@ -5,6 +5,7 @@ import learn.wreckmyhouse.model.Reservation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +21,6 @@ class ReservationServiceTest {
     ReservationService reservationService;
     HostService hostService;
     GuestService guestService;
-    String hostId = "3edda6bc-ab95-49a8-8962-d50b53f84b15";
 
     @BeforeEach
     void setUp() {
@@ -29,7 +29,14 @@ class ReservationServiceTest {
 
     @Test
     void shouldFindAllReservations() throws DataException {
-        List<Reservation> result = reservationService.findAllReservations(hostId);
+        List<Reservation> result = reservationService.findAllReservations(HostRepositoryDouble.hostId);
         assertEquals(1, result.size());
+    }
+
+    @Test
+    void shouldFindReservationById() throws DataException {
+        Reservation result = reservationService.findReservationById(HostRepositoryDouble.hostId, 1);
+        assertNotNull(result);
+        assertEquals(LocalDate.parse("2020-09-25"), result.getEndDate());
     }
 }

@@ -33,8 +33,7 @@ class GuestServiceTest {
 
     @Test
     void shouldNotFindGuestByInvalidEmail() throws DataException {
-        Result<Guest> result = new Result<>();
         Guest guest = service.findGuestByEmail("sdsdfs");
-        assertFalse(result.isSuccess());
+        assertNull(guest);
     }
 }

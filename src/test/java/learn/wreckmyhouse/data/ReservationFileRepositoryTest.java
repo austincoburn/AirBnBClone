@@ -24,7 +24,7 @@ class ReservationFileRepositoryTest {
     private final String SEED_FILE_PATH = "./data/reservation-seed-3edda6bc-ab95-49a8-8962-d50b53f84b15.csv";
     private final String TEST_DIR_PATH = "./data/reservation-data-test";
 
-    String hostId = "3edda6bc-ab95-49a8-8962-d50b53f84b15";
+
 
     ReservationFileRepository repository = new ReservationFileRepository(TEST_DIR_PATH);
 
@@ -39,13 +39,13 @@ class ReservationFileRepositoryTest {
 
     @Test
     void findAllReservations() throws DataException {
-        List<Reservation> result = repository.findAllReservations(hostId);
+        List<Reservation> result = repository.findAllReservations(HostRepositoryDouble.hostId);
         assertEquals(3, result.size());
     }
 
     @Test
     void shouldAddReservation() throws DataException {
-        Host host = new Host(hostId, "coburn", "ac@gmail.com", "(933) 4434332", "2323 Main Dr.", "Plover", "WI", 34893, new BigDecimal(1), new BigDecimal(2));
+        Host host = new Host(HostRepositoryDouble.hostId, "coburn", "ac@gmail.com", "(933) 4434332", "2323 Main Dr.", "Plover", "WI", 34893, new BigDecimal(1), new BigDecimal(2));
         Guest guest = new Guest(3, "James", "Churchill", "james@gmail.com", "(715) 4410725", "OR");
 
         Reservation reservation = new Reservation();
@@ -69,7 +69,7 @@ class ReservationFileRepositoryTest {
     @Test
     void shouldUpdateReservation() throws DataException {
 
-        Reservation reservation = repository.findReservationById(hostId, 2);
+        Reservation reservation = repository.findReservationById(HostRepositoryDouble.hostId, 2);
         reservation.setEndDate(LocalDate.parse("2020-08-19"));
         reservation.getHost().setStandard_rate(new BigDecimal(1));
         reservation.getHost().setWeekend_rate(new BigDecimal(2));
@@ -81,24 +81,24 @@ class ReservationFileRepositoryTest {
 
     @Test
     void shouldNotUpdateReservation() throws DataException {
-        Reservation reservation = repository.findReservationById(hostId, 89);
+        Reservation reservation = repository.findReservationById(HostRepositoryDouble.hostId, 89);
         boolean result = repository.editReservation(reservation);
         assertFalse(result);
     }
 
     @Test
     void shouldDeleteReservation() throws DataException {
-        List<Reservation> all = repository.findAllReservations(hostId);
-        Reservation reservation = repository.findReservationById(hostId, 2);
-        boolean result = repository.deleteReservation(reservation.getId(), hostId);
-        List<Reservation> afterDelete = repository.findAllReservations(hostId);
+        List<Reservation> all = repository.findAllReservations(HostRepositoryDouble.hostId);
+        Reservation reservation = repository.findReservationById(HostRepositoryDouble.hostId, 2);
+        boolean result = repository.deleteReservation(reservation.getId(), HostRepositoryDouble.hostId);
+        List<Reservation> afterDelete = repository.findAllReservations(HostRepositoryDouble.hostId);
         assertTrue(result);
         assertEquals(all.size() - 1, afterDelete.size());
     }
 
     @Test
     void shouldNotDeleteReservation() throws DataException {
-       boolean result = repository.deleteReservation(7, hostId);
+       boolean result = repository.deleteReservation(7, HostRepositoryDouble.hostId);
        assertFalse(result);
     }
 
