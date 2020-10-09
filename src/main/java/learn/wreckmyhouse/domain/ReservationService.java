@@ -128,6 +128,7 @@ public class ReservationService {
 
     private Result<Reservation> validateDates(Reservation reservation, Result<Reservation> result) throws DataException {
 
+
         if(reservation.getStartDate().isBefore(LocalDate.now())) {
             result.addErrorMessage("Start date must be in the future!");
             return result;
@@ -159,6 +160,9 @@ public class ReservationService {
 
     private Result<Reservation> validateDates(Reservation reservation) throws DataException {
         Result<Reservation> result = new Result<>();
+
+
+
         if(reservation.getStartDate().isBefore(LocalDate.now())) {
             result.addErrorMessage("Start date must be in the future!");
             return result;
@@ -173,6 +177,9 @@ public class ReservationService {
         for(Reservation line : all) {
             for(LocalDate date = line.getStartDate(); date.isBefore(line.getEndDate()); date = date.plusDays(1)) {
                 for(LocalDate date1 = reservation.getStartDate(); date1.isBefore(reservation.getEndDate()); date1 = date1.plusDays(1)) {
+                    if(line.getId() == reservation.getId()) {
+                        return result;
+                    }
                     if(date1.isEqual(date)) {
                         result.addErrorMessage("This date is already booked!");
                         return result;

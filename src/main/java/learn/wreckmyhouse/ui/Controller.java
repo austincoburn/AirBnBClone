@@ -39,7 +39,6 @@ public class Controller {
         MenuOption option;
         do{
             option = view.displayMenuAndSelect();
-            System.out.println(option.getTitle());
             switch (option) {
                 case EXIT:
                     view.printHeader("Goodbye!");
@@ -51,7 +50,8 @@ public class Controller {
                     makeReservation();
                     break;
                 case EDIT_RESERVATION:
-                    //Edit a reservation
+                    view.printHeader("Edit a Reservation");
+                    editReservation();
                     break;
                 case DELETE_RESERVATION:
                     //Cancel a reservation
@@ -94,7 +94,25 @@ public class Controller {
     }
 
     private void editReservation() throws DataException {
-
+        String guestEmail = view.getGuestEmail();
+        Result<Guest> guestResult = guestService.findGuestByEmail(guestEmail);
+        if(!guestResult.isSuccess()) {
+            view.displayResult(guestResult);
+            return;
+        }
+        String hostEmail = view.getHostEmail();
+        Result<Host> hostResult = hostService.findHostByEmail(hostEmail);
+        if(!hostResult.isSuccess()) {
+            view.displayResult(hostResult);
+            return;
+        }
+        String hostId = hostResult.getPayload().getHostId();
+        List<Reservation> allReservations = reservationService.findAllReservations(hostId);
+        List<Reservation> guestReservationsList = view.viewReservationsForGuest(allReservations, hostResult.getPayload(), guestEmail);
+        Reservation reservationSelection = view.findReservation(guestReservationsList);
+        Reservation updatedReservation = view.updateReservation(reservationSelection);
+        Result<Reservation> result = reservationService.updateReservation(updatedReservation);
+        view.displayResult(result);
     }
 
     private void deleteReservation() throws DataException {

@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -51,6 +52,39 @@ public class View {
        }
     }
 
+    public List<Reservation> viewReservationsForGuest(List<Reservation> reservations, Host host, String guestEmail) {
+        List<Reservation> updatedReservations = new ArrayList<>();
+        if(reservations == null || reservations.size() == 0) {
+            System.out.println("No reservations found for " + host.getEmail());
+            return null;
+        }
+        printHeader(host.getLastName() + ": " + host.getCity() + ", " + host.getState());
+        for(Reservation reservation : reservations) {
+            if(reservation.getGuest().getEmail().equalsIgnoreCase(guestEmail)) {
+                updatedReservations.add(reservation);
+                System.out.printf("ID: %s, %s - %s, Guest: %s, %s, Email: %s%n", reservation.getId(), reservation.getStartDate(), reservation.getEndDate(),
+                        reservation.getGuest().getLastName(), reservation.getGuest().getFirstname(), reservation.getGuest().getEmail());
+            }
+        }
+        return updatedReservations;
+    }
+
+    public Reservation findReservation(List<Reservation> reservations) {
+        if(reservations.size() == 0) {
+            return null;
+        }
+
+        do {
+            int reservationId = readInt("Reservation ID: ");
+            for (Reservation reservation : reservations) {
+                if (reservation.getId() == reservationId) {
+                    return reservation;
+                }
+            }
+            System.out.printf("Reservation ID: %s not found%n", reservationId);
+        } while(true);
+    }
+
     public Reservation makeReservation(List<Reservation> allReservations, Host host, Guest guest) {
         Reservation reservation = new Reservation();
         viewReservations(allReservations, host);
@@ -67,7 +101,23 @@ public class View {
         System.out.printf("End: %s%n", reservation.getEndDate());
         System.out.printf("Total: $%.2f%n", reservation.getTotalPrice());
 
-        boolean answer = readBoolean("Is this okay? [y or n]");
+        boolean answer = readBoolean("Is this okay? [y or n] : ");
+        if(answer == false) {
+            return null;
+        }
+        return reservation;
+    }
+
+    public Reservation updateReservation(Reservation reservation) {
+        reservation.setStartDate(readLocalDate("Start Date (MM/dd/yyyy): "));
+        reservation.setEndDate(readLocalDate("End Date: (MM/dd/yyyy): "));
+        reservation.setTotalPrice(reservation.calculateTotalPrice());
+
+        printHeader("Summary");
+        System.out.printf("Start: %s%n", reservation.getStartDate());
+        System.out.printf("End: %s%n", reservation.getEndDate());
+        System.out.printf("Total: $%.2f%n", reservation.getTotalPrice());
+        boolean answer = readBoolean("Is this okay? [y or n] : ");
         if(answer == false) {
             return null;
         }
