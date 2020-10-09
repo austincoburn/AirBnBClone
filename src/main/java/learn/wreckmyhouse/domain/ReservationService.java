@@ -138,6 +138,11 @@ public class ReservationService {
             return result;
         }
 
+        if(reservation.getStartDate().isEqual(reservation.getEndDate())) {
+            result.addErrorMessage("Start date and end date cannot be on the same day!");
+            return result;
+        }
+
         List<Reservation> all = findAllReservations(reservation.getHost().getHostId());
         for(Reservation line : all) {
             for(LocalDate date = line.getStartDate(); date.isBefore(line.getEndDate()); date = date.plusDays(1)) {

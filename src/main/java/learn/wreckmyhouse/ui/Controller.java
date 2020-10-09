@@ -4,7 +4,13 @@ import learn.wreckmyhouse.data.DataException;
 import learn.wreckmyhouse.domain.GuestService;
 import learn.wreckmyhouse.domain.HostService;
 import learn.wreckmyhouse.domain.ReservationService;
+import learn.wreckmyhouse.domain.Result;
+import learn.wreckmyhouse.model.Guest;
+import learn.wreckmyhouse.model.Host;
+import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class Controller {
@@ -39,10 +45,10 @@ public class Controller {
                     view.printHeader("Goodbye!");
                     break;
                 case VIEW_RESERVATIONS:
-                    //viewwwww
+                    viewReservations();
                     break;
                 case MAKE_RESERVATION:
-                    //make a reservation method
+                    makeReservation();
                     break;
                 case EDIT_RESERVATION:
                     //Edit a reservation
@@ -52,5 +58,46 @@ public class Controller {
                     break;
             }
         } while (option != MenuOption.EXIT);
+    }
+
+
+    private void viewReservations() throws DataException {
+        String hostEmail = view.getHostEmail();
+        Result<Host> result = hostService.findHostByEmail(hostEmail);
+        if(result.isSuccess()) {
+            String hostId = result.getPayload().getHostId();
+            List<Reservation> allReservations = reservationService.findAllReservations(hostId);
+            view.viewReservations(allReservations, result.getPayload());
+        } else {
+            view.displayResult(result);
+        }
+    }
+
+    private void makeReservation() throws DataException {
+        String guestEmail = view.getGuestEmail();
+        Result<Guest> guestResult = guestService.findGuestByEmail(guestEmail);
+        if(!guestResult.isSuccess()) {
+            view.displayResult(guestResult);
+            return;
+        }
+        String hostEmail = view.getHostEmail();
+        Result<Host> hostResult = hostService.findHostByEmail(hostEmail);
+        if(!hostResult.isSuccess()) {
+            view.displayResult(hostResult);
+            return;
+        }
+        String hostId = hostResult.getPayload().getHostId();
+        List<Reservation> allReservations = reservationService.findAllReservations(hostId);
+        Reservation reservation = view.makeReservation(allReservations, hostResult.getPayload(), guestResult.getPayload());
+        Result<Reservation> result = reservationService.add(reservation);
+        view.displayResult(result);
+    }
+
+    private void editReservation() throws DataException {
+
+    }
+
+    private void deleteReservation() throws DataException {
+
     }
 }

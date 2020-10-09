@@ -1,10 +1,8 @@
 package learn.wreckmyhouse.domain;
 
 import learn.wreckmyhouse.data.DataException;
-import learn.wreckmyhouse.data.GuestFileRepository;
 import learn.wreckmyhouse.data.GuestRepository;
 import learn.wreckmyhouse.model.Guest;
-import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

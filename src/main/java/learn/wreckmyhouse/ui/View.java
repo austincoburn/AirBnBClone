@@ -1,11 +1,16 @@
 package learn.wreckmyhouse.ui;
 
 import learn.wreckmyhouse.domain.Result;
+import learn.wreckmyhouse.model.Guest;
+import learn.wreckmyhouse.model.Host;
+import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Component;
 
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
 
 @Component
@@ -23,6 +28,64 @@ public class View {
         int index = readInt("Select [0-4]: ", 0, 4);
         return values[index];
     }
+
+    public String getHostEmail() {
+        String hostEmail = readRequiredString("Host Email: ");
+        return hostEmail;
+    }
+
+    public String getGuestEmail() {
+        String guestEmail = readRequiredString("Guest Email: ");
+        return guestEmail;
+    }
+
+    public void viewReservations(List<Reservation> reservations, Host host) {
+        if(reservations == null || reservations.size() == 0) {
+            System.out.println("No reservations found for " + host.getEmail());
+            return;
+        }
+        printHeader(host.getLastName() + ": " + host.getCity() + ", " + host.getState());
+       for(Reservation reservation : reservations) {
+           System.out.printf("ID: %s, %s - %s, Guest: %s, %s, Email: %s%n", reservation.getId(), reservation.getStartDate(), reservation.getEndDate(),
+                   reservation.getGuest().getLastName(), reservation.getGuest().getFirstname(), reservation.getGuest().getEmail());
+       }
+    }
+
+    public Reservation makeReservation(List<Reservation> allReservations, Host host, Guest guest) {
+        Reservation reservation = new Reservation();
+        viewReservations(allReservations, host);
+
+        reservation.setGuest(guest);
+        reservation.setHost(host);
+        reservation.setStartDate(readLocalDate("Start Date (MM/dd/yyyy): "));
+        reservation.setEndDate(readLocalDate("End Date: (MM/dd/yyyy)"));
+        reservation.setTotalPrice(reservation.calculateTotalPrice());
+
+
+        printHeader("Summary");
+        System.out.printf("Start: %s%n", reservation.getStartDate());
+        System.out.printf("End: %s%n", reservation.getEndDate());
+        System.out.printf("Total: $%.2f%n", reservation.getTotalPrice());
+
+        boolean answer = readBoolean("Is this okay? [y or n]");
+        if(answer == false) {
+            return null;
+        }
+        return reservation;
+    }
+
+    public boolean readBoolean(String prompt) {
+        while (true) {
+            String input = readRequiredString(prompt).toLowerCase();
+            if (input.equals("y")) {
+                return true;
+            } else if (input.equals("n")) {
+                return false;
+            }
+            System.out.println("[INVALID] Please enter 'y' or 'n'.");
+        }
+    }
+
 
     public void printHeader(String message) {
         System.out.println();
