@@ -83,10 +83,6 @@ class ReservationServiceTest {
         Host host = new Host("3edda6bc-ab95-49a8-8962-d50b53f84b15", null, null, null, null, null, null, 0, null,null);
         Reservation reservation = new Reservation(1, guest, host, LocalDate.parse("2020-10-26"), LocalDate.parse("2020-10-30"), new BigDecimal(40093.34));
 
-        //Duplicate date
-        Result<Reservation> result = reservationService.updateReservation(reservation);
-        assertEquals("[This date is already booked!]", result.getErrorMessages().toString());
-
         //DATE set to a date in the past
         reservation = new Reservation(1, guest, host, LocalDate.parse("1886-09-23"), LocalDate.parse("2020-10-30"), new BigDecimal(40093.34));
         Result<Reservation> result2 = reservationService.updateReservation(reservation);

@@ -79,20 +79,19 @@ public class ReservationService {
        return result;
     }
 
-    public Result<Reservation> deleteReservation(int reservationId, String hostEmail) throws DataException {
+    public Result<Reservation> deleteReservation(int reservationId, String hostId) throws DataException {
 
         Result<Reservation> result = new Result<>();
-        Reservation reservation = findReservationById(hostEmail, reservationId);
+        Reservation reservation = findReservationById(hostId, reservationId);
         if(reservation == null) {
             result.addErrorMessage("The reservation ID: " + reservationId + " you entered was invalid");
             return result;
         }
-        boolean success = reservationRepository.deleteReservation(reservationId, hostEmail);
+        boolean success = reservationRepository.deleteReservation(reservationId, hostId);
         if(!success) {
             result.addErrorMessage("Deletion was unsuccessful!");
             return result;
         }
-        result.setPayload(reservation);
         return result;
     }
 

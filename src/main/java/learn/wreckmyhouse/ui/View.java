@@ -85,6 +85,10 @@ public class View {
         } while(true);
     }
 
+    public Reservation deleteReservation(List<Reservation> reservations, Host host, String guestEmail) {
+        return findReservation(viewReservationsForGuest(reservations, host, guestEmail));
+    }
+
     public Reservation makeReservation(List<Reservation> allReservations, Host host, Guest guest) {
         Reservation reservation = new Reservation();
         viewReservations(allReservations, host);

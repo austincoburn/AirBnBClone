@@ -44,9 +44,11 @@ public class Controller {
                     view.printHeader("Goodbye!");
                     break;
                 case VIEW_RESERVATIONS:
+                    view.printHeader("View Reservations for Host");
                     viewReservations();
                     break;
                 case MAKE_RESERVATION:
+                    view.printHeader("Make a Reservation");
                     makeReservation();
                     break;
                 case EDIT_RESERVATION:
@@ -54,7 +56,8 @@ public class Controller {
                     editReservation();
                     break;
                 case DELETE_RESERVATION:
-                    //Cancel a reservation
+                    view.printHeader("Delete a Reservation");
+                    deleteReservation();
                     break;
             }
         } while (option != MenuOption.EXIT);
@@ -116,6 +119,32 @@ public class Controller {
     }
 
     private void deleteReservation() throws DataException {
+        String guestEmail = view.getGuestEmail();
+        Result<Guest> guestResult = guestService.findGuestByEmail(guestEmail);
+        if(!guestResult.isSuccess()) {
+            view.displayResult(guestResult);
+            return;
+        }
+        String hostEmail = view.getHostEmail();
+        Result<Host> hostResult = hostService.findHostByEmail(hostEmail);
+        if(!hostResult.isSuccess()) {
+            view.displayResult(hostResult);
+            return;
+        }
+
+        List<Reservation> allReservations = reservationService.findAllReservations(hostResult.getPayload().getHostId());
+        Reservation reservation = view.deleteReservation(allReservations, hostResult.getPayload(), guestResult.getPayload().getEmail());
+        Result<Reservation> result = reservationService.deleteReservation(reservation.getId(), hostResult.getPayload().getHostId());
+        view.displayResult(result);
+
+
+
+//        String hostId = hostResult.getPayload().getHostId();
+//        List<Reservation> allReservations = reservationService.findAllReservations(hostId);
+//        List<Reservation> reservationsForGuest = view.viewReservationsForGuest(allReservations, hostResult.getPayload(), guestEmail);
+//        Reservation reservation = view.findReservation(reservationsForGuest);
+//        Result<Reservation> result = reservationService.deleteReservation(reservation.getId(), hostResult.getPayload().getEmail());
+//        view.displayResult(result);
 
     }
 }
