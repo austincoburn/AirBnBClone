@@ -45,7 +45,6 @@ public class GuestFileRepository implements GuestRepository {
     }
 
     private Guest deserialize(String[] fields) {
-        //guest_id,first_name,last_name,email,phone,state
         Guest result = new Guest();
         result.setGuest_Id(Integer.parseInt(fields[0]));
         result.setFirstname(fields[1]);

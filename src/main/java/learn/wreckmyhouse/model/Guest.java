@@ -54,16 +54,8 @@ public class Guest {
         this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getState() {
-        return State;
     }
 
     public void setState(String state) {

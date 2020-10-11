@@ -30,16 +30,6 @@ public class View {
         return values[index];
     }
 
-    public String getHostEmail() {
-        String hostEmail = readRequiredString("Host Email: ");
-        return hostEmail;
-    }
-
-    public String getGuestEmail() {
-        String guestEmail = readRequiredString("Guest Email: ");
-        return guestEmail;
-    }
-
     public void viewReservations(List<Reservation> reservations, Host host) {
         if(reservations == null || reservations.size() == 0) {
             System.out.println("No reservations found for " + host.getEmail());
@@ -50,6 +40,20 @@ public class View {
            System.out.printf("ID: %s, %s - %s, Guest: %s, %s, Email: %s%n", reservation.getId(), reservation.getStartDate(), reservation.getEndDate(),
                    reservation.getGuest().getLastName(), reservation.getGuest().getFirstname(), reservation.getGuest().getEmail());
        }
+    }
+
+    public void viewFutureReservations(List<Reservation> reservations, Host host) {
+        if(reservations == null || reservations.size() == 0) {
+            System.out.println("No reservations found for " + host.getEmail());
+            return;
+        }
+        printHeader(host.getLastName() + ": " + host.getCity() + ", " + host.getState());
+        for(Reservation reservation : reservations) {
+            if(reservation.getStartDate().isAfter(LocalDate.now())) {
+                System.out.printf("ID: %s, %s - %s, Guest: %s, %s, Email: %s%n", reservation.getId(), reservation.getStartDate(), reservation.getEndDate(),
+                        reservation.getGuest().getLastName(), reservation.getGuest().getFirstname(), reservation.getGuest().getEmail());
+            }
+        }
     }
 
     public List<Reservation> viewReservationsForGuest(List<Reservation> reservations, Host host, String guestEmail) {
@@ -86,7 +90,6 @@ public class View {
         return updatedReservations;
     }
 
-
     public Reservation findReservation(List<Reservation> reservations) {
         if(reservations.size() == 0) {
             return null;
@@ -109,14 +112,13 @@ public class View {
 
     public Reservation makeReservation(List<Reservation> allReservations, Host host, Guest guest) {
         Reservation reservation = new Reservation();
-        viewReservations(allReservations, host);
+        viewFutureReservations(allReservations, host);
 
         reservation.setGuest(guest);
         reservation.setHost(host);
         reservation.setStartDate(readLocalDate("Start Date (MM/dd/yyyy): "));
         reservation.setEndDate(readLocalDate("End Date: (MM/dd/yyyy): "));
         reservation.setTotalPrice(reservation.calculateTotalPrice());
-
 
         printHeader("Summary");
         System.out.printf("Start: %s%n", reservation.getStartDate());
@@ -144,6 +146,16 @@ public class View {
             return null;
         }
         return reservation;
+    }
+
+    public String getHostEmail() {
+        String hostEmail = readRequiredString("Host Email: ");
+        return hostEmail;
+    }
+
+    public String getGuestEmail() {
+        String guestEmail = readRequiredString("Guest Email: ");
+        return guestEmail;
     }
 
     public boolean readBoolean(String prompt) {

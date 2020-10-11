@@ -20,7 +20,6 @@ public class HostFileRepository implements HostRespository {
         this.filePath = filePath;
     }
 
-
     @Override
     public List<Host> findAllHosts() throws DataException {
         ArrayList<Host> result = new ArrayList<>();
@@ -47,7 +46,6 @@ public class HostFileRepository implements HostRespository {
     }
 
     private Host deserialize(String[] fields) {
-        //id,last_name,email,phone,address,city,state,postal_code,standard_rate,weekend_rate
         Host result = new Host();
         result.setHostId(fields[0]);
         result.setLastName(fields[1]);

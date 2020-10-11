@@ -106,7 +106,6 @@ public class ReservationFileRepository implements ReservationRepository {
     }
 
     private Reservation deserialize(String[] fields, String hostId) {
-        //id,start_date,end_date,guest_id,total
         Reservation reservation = new Reservation();
         Host host = new Host();
         host.setHostId(hostId);

@@ -2,9 +2,7 @@ package learn.wreckmyhouse.domain;
 
 import learn.wreckmyhouse.data.DataException;
 import learn.wreckmyhouse.data.HostRespository;
-import learn.wreckmyhouse.model.Guest;
 import learn.wreckmyhouse.model.Host;
-import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,8 +49,6 @@ public class HostService {
         }
         return null;
     }
-
-
 }
 
 

@@ -9,8 +9,6 @@ import learn.wreckmyhouse.model.Guest;
 import learn.wreckmyhouse.model.Host;
 import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Component;
-
-import javax.xml.crypto.Data;
 import java.util.List;
 
 @Component
