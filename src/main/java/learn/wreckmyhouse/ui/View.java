@@ -69,6 +69,24 @@ public class View {
         return updatedReservations;
     }
 
+    public List<Reservation> viewReservationsForGuestInFuture(List<Reservation> reservations, Host host, String guestEmail) {
+        List<Reservation> updatedReservations = new ArrayList<>();
+        if(reservations == null || reservations.size() == 0) {
+            System.out.println("No reservations found for " + host.getEmail());
+            return null;
+        }
+        printHeader(host.getLastName() + ": " + host.getCity() + ", " + host.getState());
+        for(Reservation reservation : reservations) {
+            if(reservation.getGuest().getEmail().equalsIgnoreCase(guestEmail) && reservation.getStartDate().isAfter(LocalDate.now())) {
+                updatedReservations.add(reservation);
+                System.out.printf("ID: %s, %s - %s, Guest: %s, %s, Email: %s%n", reservation.getId(), reservation.getStartDate(), reservation.getEndDate(),
+                        reservation.getGuest().getLastName(), reservation.getGuest().getFirstname(), reservation.getGuest().getEmail());
+            }
+        }
+        return updatedReservations;
+    }
+
+
     public Reservation findReservation(List<Reservation> reservations) {
         if(reservations.size() == 0) {
             return null;
@@ -86,7 +104,7 @@ public class View {
     }
 
     public Reservation deleteReservation(List<Reservation> reservations, Host host, String guestEmail) {
-        return findReservation(viewReservationsForGuest(reservations, host, guestEmail));
+        return findReservation(viewReservationsForGuestInFuture(reservations, host, guestEmail));
     }
 
     public Reservation makeReservation(List<Reservation> allReservations, Host host, Guest guest) {
@@ -96,7 +114,7 @@ public class View {
         reservation.setGuest(guest);
         reservation.setHost(host);
         reservation.setStartDate(readLocalDate("Start Date (MM/dd/yyyy): "));
-        reservation.setEndDate(readLocalDate("End Date: (MM/dd/yyyy)"));
+        reservation.setEndDate(readLocalDate("End Date: (MM/dd/yyyy): "));
         reservation.setTotalPrice(reservation.calculateTotalPrice());
 
 

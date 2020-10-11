@@ -10,6 +10,7 @@ import learn.wreckmyhouse.model.Host;
 import learn.wreckmyhouse.model.Reservation;
 import org.springframework.stereotype.Component;
 
+import javax.xml.crypto.Data;
 import java.util.List;
 
 @Component
@@ -65,26 +66,23 @@ public class Controller {
 
 
     private void viewReservations() throws DataException {
-        String hostEmail = view.getHostEmail();
-        Result<Host> result = hostService.findHostByEmail(hostEmail);
-        if(result.isSuccess()) {
-            String hostId = result.getPayload().getHostId();
-            List<Reservation> allReservations = reservationService.findAllReservations(hostId);
-            view.viewReservations(allReservations, result.getPayload());
-        } else {
+        Result<Host> result = hostValidation(view.getHostEmail());
+        if(!result.isSuccess()) {
             view.displayResult(result);
+            return;
         }
+        String hostId = result.getPayload().getHostId();
+        List<Reservation> allReservations = reservationService.findAllReservations(hostId);
+        view.viewReservations(allReservations, result.getPayload());
     }
 
     private void makeReservation() throws DataException {
-        String guestEmail = view.getGuestEmail();
-        Result<Guest> guestResult = guestService.findGuestByEmail(guestEmail);
+        Result<Guest> guestResult = guestValidation(view.getGuestEmail());
         if(!guestResult.isSuccess()) {
             view.displayResult(guestResult);
             return;
         }
-        String hostEmail = view.getHostEmail();
-        Result<Host> hostResult = hostService.findHostByEmail(hostEmail);
+        Result<Host> hostResult = hostValidation(view.getHostEmail());
         if(!hostResult.isSuccess()) {
             view.displayResult(hostResult);
             return;
@@ -92,59 +90,67 @@ public class Controller {
         String hostId = hostResult.getPayload().getHostId();
         List<Reservation> allReservations = reservationService.findAllReservations(hostId);
         Reservation reservation = view.makeReservation(allReservations, hostResult.getPayload(), guestResult.getPayload());
+        if(reservation == null) {
+            return;
+        }
         Result<Reservation> result = reservationService.add(reservation);
         view.displayResult(result);
     }
 
     private void editReservation() throws DataException {
-        String guestEmail = view.getGuestEmail();
-        Result<Guest> guestResult = guestService.findGuestByEmail(guestEmail);
+        Result<Guest> guestResult = guestValidation(view.getGuestEmail());
         if(!guestResult.isSuccess()) {
             view.displayResult(guestResult);
             return;
         }
-        String hostEmail = view.getHostEmail();
-        Result<Host> hostResult = hostService.findHostByEmail(hostEmail);
+        Result<Host> hostResult = hostValidation(view.getHostEmail());
         if(!hostResult.isSuccess()) {
             view.displayResult(hostResult);
             return;
         }
         String hostId = hostResult.getPayload().getHostId();
         List<Reservation> allReservations = reservationService.findAllReservations(hostId);
-        List<Reservation> guestReservationsList = view.viewReservationsForGuest(allReservations, hostResult.getPayload(), guestEmail);
+        List<Reservation> guestReservationsList = view.viewReservationsForGuest(allReservations, hostResult.getPayload(), guestResult.getPayload().getEmail());
         Reservation reservationSelection = view.findReservation(guestReservationsList);
         Reservation updatedReservation = view.updateReservation(reservationSelection);
+        if(updatedReservation == null) {
+            return;
+        }
         Result<Reservation> result = reservationService.updateReservation(updatedReservation);
         view.displayResult(result);
     }
 
     private void deleteReservation() throws DataException {
-        String guestEmail = view.getGuestEmail();
-        Result<Guest> guestResult = guestService.findGuestByEmail(guestEmail);
+        Result<Guest> guestResult = guestValidation(view.getGuestEmail());
         if(!guestResult.isSuccess()) {
             view.displayResult(guestResult);
             return;
         }
-        String hostEmail = view.getHostEmail();
-        Result<Host> hostResult = hostService.findHostByEmail(hostEmail);
+        Result<Host> hostResult = hostValidation(view.getHostEmail());
         if(!hostResult.isSuccess()) {
             view.displayResult(hostResult);
             return;
         }
-
         List<Reservation> allReservations = reservationService.findAllReservations(hostResult.getPayload().getHostId());
         Reservation reservation = view.deleteReservation(allReservations, hostResult.getPayload(), guestResult.getPayload().getEmail());
         Result<Reservation> result = reservationService.deleteReservation(reservation.getId(), hostResult.getPayload().getHostId());
         view.displayResult(result);
+    }
 
 
+    private Result hostValidation(String email) throws DataException {
+        Result<Host> result = hostService.findHostByEmail(email);
+        if(!result.isSuccess()) {
+            return result;
+        }
+        return result;
+    }
 
-//        String hostId = hostResult.getPayload().getHostId();
-//        List<Reservation> allReservations = reservationService.findAllReservations(hostId);
-//        List<Reservation> reservationsForGuest = view.viewReservationsForGuest(allReservations, hostResult.getPayload(), guestEmail);
-//        Reservation reservation = view.findReservation(reservationsForGuest);
-//        Result<Reservation> result = reservationService.deleteReservation(reservation.getId(), hostResult.getPayload().getEmail());
-//        view.displayResult(result);
-
+    private Result guestValidation(String email) throws DataException {
+        Result<Guest> result = guestService.findGuestByEmail(email);
+        if(!result.isSuccess()) {
+            return result;
+        }
+        return result;
     }
 }
